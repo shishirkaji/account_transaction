@@ -12,28 +12,12 @@ docker compose up --build
 
 Serves on <http://localhost:3000> — migrations + seed run automatically on boot. The image pins Ruby 4.0.6, so it works on any machine.
 
-**Custom balances:** mount your own CSV (one `account_number,balance` per line) over the sample in `docker-compose.yml`:
-
-```yaml
-volumes:
-  - ./storage:/app/storage
-  - ./my_balances.csv:/app/data/mable_account_balances.csv
-```
-
-Then `docker compose up --build`. Bundled datasets: `data/mable_account_balances_50.csv` (50 accounts) · `data/mable_transactions_100.csv` (100 diverse transfers).
-
-### Reset the database
-
-```bash
-docker compose down
-rm -f storage/development.sqlite3
-docker compose up --build
-```
+**Custom balances:** mount your own initial account balance csv file by changing the mounted volume in `docker-compose.yml`. Change this `./data/mable_account_balances_50.csv` to point your file.
 
 ## API
 
 ### POST /transaction_files — upload a day's transfers
-
+Use Bundled datasets provided or use your own: `data/mable_account_balances_50.csv` (50 accounts) · `data/mable_transactions_100.csv` (100 diverse transfers).
 Multipart `file` field; rows are `from,to,amount`:
 
 ```bash
@@ -67,6 +51,13 @@ Example response (truncated to one transaction):
     ]
   }
 }
+```
+### Reset the database
+
+```bash
+docker compose down
+rm -f storage/development.sqlite3
+docker compose up --build
 ```
 
 ### Other handy endpoints
