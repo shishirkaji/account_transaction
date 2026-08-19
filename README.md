@@ -43,27 +43,14 @@ curl -F "file=@mable_transactions.csv" http://localhost:3000/transaction_files
 
 Per-transaction `fail_reason`: `INSUFFICIENT_BALANCE` · `ACCOUNT_BLOCKED` · `ACCOUNT_NOT_FOUND`
 
-### GET /accounts — current balances
+### Other handy endpoints
 
-```bash
-curl http://localhost:3000/accounts
-```
-
-### GET /transactions — all transactions
-
-```bash
-curl http://localhost:3000/transactions
-```
-
-### GET /transaction_files — all uploaded files
-
-```bash
-curl http://localhost:3000/transaction_files
-```
-
-### GET /up — health check
-
-Returns 200 when alive.
+| Endpoint | Returns |
+|---|---|
+| `GET /accounts` | all accounts + current balances |
+| `GET /transactions` | all transactions (status, fail reason, old balances) |
+| `GET /transaction_files` | all uploaded files |
+| `GET /up` | health check (200 when alive) |
 
 ---
 
