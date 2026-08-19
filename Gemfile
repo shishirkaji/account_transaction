@@ -5,6 +5,7 @@ gem "puma", ">= 5.0"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "bootsnap", require: false
 gem "thruster", require: false
+gem "sqlite3"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"

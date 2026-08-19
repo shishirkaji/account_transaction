@@ -13,6 +13,9 @@
 
 /config/master.key
 
+/storage/*
+!/storage/.keep
+
 /node_modules
 
 .DS_Store

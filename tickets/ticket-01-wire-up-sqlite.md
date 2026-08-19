@@ -1,6 +1,6 @@
 # Ticket 01 — Wire SQLite into the app (gem + AR + database.yml)
 
-**Status:** TODO
+**Status:** ✅ DONE (2026-08-19) — all acceptance criteria verified. Note: adapter_name prints `SQLite` (Rails 8.1 naming), DB file created lazily on first query. RSpec boots clean, 0 examples.
 **Estimate:** ~15 min
 **Depends on:** nothing
 
