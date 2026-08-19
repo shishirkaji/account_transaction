@@ -1,6 +1,8 @@
 # Ticket 09 — Transaction#process! (the heart)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). 9 new spec groups incl. atomicity. Two object-identity bugs found & fixed (self-transfer stale balance → `to_account.reload`; mock stubs for both find_by lookups). rspec 61 examples, 0 failures; deliverable proof exact: `[450000, 170000, "complete", 500000, 120000]`.
 **Estimate:** ~45 min (biggest ticket — it carries the business rules)
 **Depends on:** Ticket 06 (Account money methods), Ticket 08 (parsing)
 
