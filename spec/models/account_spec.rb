@@ -34,4 +34,54 @@ RSpec.describe Account, type: :model do
       expect(duplicate.errors[:account_number]).to be_present
     end
   end
+
+  describe "#add_balance" do
+    it "increases the balance and returns the new balance" do
+      account = create(:account, balance_cents: 500000)
+
+      new_balance = account.add_balance(50000)
+
+      expect(new_balance).to eq(550000)
+      expect(account.reload.balance_cents).to eq(550000)
+    end
+  end
+
+  describe "#deduct_balance" do
+    it "decreases the balance and returns the new balance" do
+      account = create(:account, balance_cents: 500000)
+
+      new_balance = account.deduct_balance(50000)
+
+      expect(new_balance).to eq(450000)
+      expect(account.reload.balance_cents).to eq(450000)
+    end
+
+    it "allows deducting exactly to zero" do
+      account = create(:account, balance_cents: 50000)
+
+      new_balance = account.deduct_balance(50000)
+
+      expect(new_balance).to eq(0)
+      expect(account.reload.balance_cents).to eq(0)
+    end
+
+    it "raises InsufficientBalanceError when it would go below zero and leaves the balance unchanged" do
+      account = create(:account, balance_cents: 50000)
+
+      expect { account.deduct_balance(50001) }.to raise_error(InsufficientBalanceError)
+      expect(account.reload.balance_cents).to eq(50000)
+    end
+  end
+
+  describe "#block" do
+    it "sets blocked and blocked_reason, and returns nil" do
+      account = create(:account)
+
+      result = account.block("fraud")
+
+      expect(result).to be_nil
+      expect(account.reload).to be_blocked
+      expect(account.reload.blocked_reason).to eq("fraud")
+    end
+  end
 end
