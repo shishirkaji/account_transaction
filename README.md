@@ -1,4 +1,4 @@
-# Solution Transaction
+# Bank Transaction
 
 A minimal banking API for the **Mable Back End Code Challenge**: load account
 balances from a CSV, accept a day's transfers as a CSV, and enforce that no
@@ -43,6 +43,28 @@ To stop: `Ctrl+C`, or `docker compose down`.
 
 > The Docker image pins Ruby 4.0.6, so the app behaves identically on any
 > machine. Local development below remains an option if you prefer it.
+
+### Use your own account balances CSV
+
+The app seeds from `data/mable_account_balances.csv` on every start. Each line
+is `account_number,balance` (dollars with up to 2 decimals):
+
+```
+1111234522226789,5000.00
+2222123433331212,550.00
+```
+
+To use your own file, mount it over the sample in `docker-compose.yml`:
+
+```yaml
+volumes:
+  - ./storage:/app/storage
+  - ./my_balances.csv:/app/data/mable_account_balances.csv
+```
+
+Then `docker compose up --build` — the seed reads your file instead of the
+sample. (Running locally: drop your CSV at `data/mable_account_balances.csv`
+and run `bin/rails load_balances`.)
 
 ## Requirements (local development only)
 
