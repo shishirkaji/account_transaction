@@ -1,6 +1,8 @@
 # Ticket 15 — Dockerize (OPTIONAL bonus, local stays primary)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): built + ran on Docker 29/Compose v5. Health 200, accounts seeded, real CSV upload → 201 all complete. Volume persistence proven: transactions history grew 17 → 21 across restarts; host `storage/development.sqlite3` written. Balances reset per boot is the entrypoint's clear-and-reload (by design, repeatable demos). README section deferred to after Ticket 14 (both edit README — dependency map).
 **Estimate:** ~20 min
 **Depends on:** Tickets 10–12 (seed + endpoints needed for the proof)
 
