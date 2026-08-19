@@ -1,3 +1,3 @@
 class TransactionFile < ApplicationRecord
-  has_many :transactions, dependent: :destroy
+  has_many :transactions, dependent: :restrict_with_error
 end

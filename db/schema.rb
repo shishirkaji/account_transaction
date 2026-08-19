@@ -38,7 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_145405) do
     t.string "status", default: "pending"
     t.string "to_account_number"
     t.integer "to_account_old_balance_cents"
-    t.integer "transaction_file_id", null: false
+    t.integer "transaction_file_id"
     t.datetime "updated_at", null: false
     t.index ["from_account_number"], name: "index_transactions_on_from_account_number"
     t.index ["status"], name: "index_transactions_on_status"

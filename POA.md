@@ -21,7 +21,7 @@ accepts a day's transfers, applies the rules, and exposes the resulting state.
 | Money | Store **cents as integers** (`balance_cents`, `amount_cents`). Never floats. Parse 2-decimal CSV once, format to dollars only at the API boundary |
 | Account numbers | **Strings**, always (16 digits, opaque identifiers, no arithmetic) |
 | Naming | Ruby snake_case everywhere; transfer value is `amount`, never `balance` |
-| Transaction states | `pending` (initial) → `complete` \| `failed` (both terminal). **Immutable once it leaves `pending`** |
+| Transaction states | `pending` (initial) → `complete` \| `failed` (both terminal). **Immutable once it leaves `pending`** — and **transactions can never be deleted** (append-only ledger, per Shishir 2026-08-20) |
 | Blocked accounts | `blocked = cannot send, CAN still receive`. Only the from-account is ever blocked. Never block the to-account |
 | Cascade rule | Insufficient funds on a transfer → that transfer fails → from-account gets blocked → all later transfers from that account in the same file fail with `ACCOUNT_BLOCKED` (never `pending`) |
 | No retries | Failed is terminal. Any future retry must create new transactions |
