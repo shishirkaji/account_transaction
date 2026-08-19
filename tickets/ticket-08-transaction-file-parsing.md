@@ -5,14 +5,14 @@
 **Depends on:** Ticket 07 (tables exist)
 
 ## Goal
-`TransactionFile.create_with_transactions(csv_string, name:)` — the file's entry point: creates the file record, parses every row into a `pending` Transaction **in file order**, marks the file valid. Bad CSV → file marked invalid, no transactions, error raised.
+`TransactionFile.create_with_transactions(csv_string, name:)` — the file's entry point: creates the file record, parses every row into a `pending` Transaction **in file order**, marks the file as parsed. Bad CSV → file marked unparsed, no transactions, error raised.
 
 ## You'll know it worked when (deliverable)
 ```
 bin/rails runner "
 csv = \"1111234522226789,1212343433335665,500.00\n3212343433335755,2222123433331212,1000.00\"
 file = TransactionFile.create_with_transactions(csv, name: 'day1.csv')
-puts [file.valid, file.transactions.map { |t| [t.from_account_number, t.to_account_number, t.amount_cents, t.status] }].inspect
+puts [file.is_valid, file.transactions.map { |t| [t.from_account_number, t.to_account_number, t.amount_cents, t.status] }].inspect
 "
 ```
 prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["3212343433335755", "2222123433331212", 100000, "pending"]]]` — note order preserved and `500.00 → 50000` cents.
@@ -26,8 +26,8 @@ prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["32
 
 **Phase 1: RED — write the specs, prove they fail**
 - [ ] Write the 4 spec groups in `spec/models/transaction_file_spec.rb`:
-  - valid CSV → file `valid: true`, N transactions in order, all `pending`
-  - wrong column count → raises, file exists with `valid: false`, **zero transactions created**
+  - valid CSV → file `is_valid: true`, N transactions in order, all `pending`
+  - wrong column count → raises, file exists with `is_valid: false`, **zero transactions created**
   - non-numeric amount → raises
   - negative/zero amount → raises
 - [ ] Run `bundle exec rspec spec/models/transaction_file_spec.rb` → confirm failures (`NoMethodError: undefined method 'create_with_transactions'`) — **this red is the proof the specs describe real behavior**
@@ -40,10 +40,10 @@ prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["32
   ```
 - [ ] In `app/models/transaction_file.rb`, implement:
   - `self.create_with_transactions(csv_string, name:)`:
-    1. create file record (`valid: false`, `uploaded_at: Time.current`)
+    1. create file record (`is_valid: false`, `uploaded_at: Time.current`)
     2. parse all rows into an array (raises on any bad row — **no transactions created yet**)
-    3. on success: bulk-create the pending transactions in order, set `valid = true`
-    4. on `TransactionParseError`: leave the file record as `valid: false`, re-raise
+    3. on success: bulk-create the pending transactions in order, set `is_valid = true`
+    4. on `TransactionParseError`: leave the file record as `is_valid: false`, re-raise
   - a private `parse_amount_to_cents(amount_string)` helper: `"500.00" → 50000`, `"500" → 50000` — **string math only, never `to_f`**
 - [ ] Row rules (raise `TransactionParseError` with a clear message on violation):
   - exactly 3 comma-separated columns (`from`, `to`, `amount`)
@@ -55,7 +55,7 @@ prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["32
 ## Acceptance criteria
 - [ ] All specs pass, 0 failures
 - [ ] Deliverable command prints the expected arrays (order preserved, cents correct)
-- [ ] On parse failure: file record persisted with `valid: false`, `file.transactions.count == 0`
+- [ ] On parse failure: file record persisted with `is_valid: false`, `file.transactions.count == 0`
 - [ ] SimpleCov TransactionFile coverage ≥ 90%
 
 ## Files touched

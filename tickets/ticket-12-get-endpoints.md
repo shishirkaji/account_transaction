@@ -32,7 +32,7 @@ returns `200` with `{"status":"SUCCESS","data":[{"account_number":"1111234522226
 - [ ] Write `spec/requests/accounts_spec.rb` and `spec/requests/transactions_spec.rb` covering:
   - `GET /accounts` → `200`, envelope, each account has `account_number` / `balance` (dollar string) / `blocked` / `blocked_reason` — and **no** `balance_cents`, `id`, or timestamps
   - `GET /transactions` → `200`, envelope, each transaction has `from_account_number`, `to_account_number`, `amount` (dollar string), `status`, `fail_reason`, old-balance fields as dollar strings or `null` — and **no** `amount_cents`
-  - `GET /transaction_files` → `200`, envelope, each file has `id`, `name`, `uploaded_at`, `valid` — and **no** timestamps
+  - `GET /transaction_files` → `200`, envelope, each file has `id`, `name`, `uploaded_at`, `is_valid` — and **no** timestamps
   - empty DB → `200` with `data: []` (not an error)
 - [ ] Run the specs → red (`NoMethodError: undefined method 'as_json'` is fine — first prove routing/shape expectations)
 
@@ -40,7 +40,7 @@ returns `200` with `{"status":"SUCCESS","data":[{"account_number":"1111234522226
 - [ ] Add `as_json` overrides:
   - `Account`: `{ account_number:, balance: <dollar string>, blocked:, blocked_reason: }`
   - `Transaction`: `{ id:, from_account_number:, to_account_number:, amount: <dollar string>, status:, fail_reason:, from_account_old_balance: <dollar string|null>, to_account_old_balance: <dollar string|null> }`
-  - `TransactionFile`: `{ id:, name:, uploaded_at:, valid: }`
+  - `TransactionFile`: `{ id:, name:, uploaded_at:, is_valid: }`
   - Shared private helper `format_cents(cents)` for the dollar strings
 - [ ] Create `AccountsController#index`, `TransactionsController#index`, `TransactionFilesController#index` — each renders `{ status: "SUCCESS", data: <collection> }`, `200`
 - [ ] Run `bundle exec rspec` → all green

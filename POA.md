@@ -56,7 +56,7 @@ Timestamps on all tables. Validation: presence + format `/\A\d{16}\z/` + uniquen
 |---|---|---|
 | `name` | string | original file name |
 | `uploaded_at` | datetime | set at creation |
-| `valid` | boolean | file parsed OK (vs. rejected at file level) |
+| `is_valid` | boolean | file parsed OK (vs. rejected at file level) |
 
 `has_many :transactions`.
 
@@ -99,7 +99,7 @@ File-level checks happen **before** parsing; parse failures happen mid-parse;
   - Validates format/columns/amounts → raises typed errors mapped to API codes
   - Creates the file record + one `pending` Transaction per valid row, **in file order**
   - Returns `[file, transactions]`
-- `valid` reflects whether parsing succeeded
+- `is_valid` reflects whether parsing succeeded
 
 ### Transaction
 - Enum: `pending` / `complete` / `failed`

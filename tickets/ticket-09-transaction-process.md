@@ -12,7 +12,7 @@ A `pending` transaction gets executed: accounts resolved, old balances captured,
 bin/rails runner "
 a = Account.create!(account_number: '1111234522226789', balance_cents: 500000)
 b = Account.create!(account_number: '1212343433335665', balance_cents: 120000)
-f = TransactionFile.create!(name: 'x.csv', uploaded_at: Time.current, valid: true)
+f = TransactionFile.create!(name: 'x.csv', uploaded_at: Time.current, is_valid: true)
 t = f.transactions.create!(from_account_number: a.account_number, to_account_number: b.account_number, amount_cents: 50000)
 t.process!
 puts [a.reload.balance_cents, b.reload.balance_cents, t.reload.status, t.from_account_old_balance_cents, t.to_account_old_balance_cents].inspect
