@@ -16,17 +16,22 @@ class TransactionFile < ApplicationRecord
     csv_string.each_line.filter_map do |line|
       next if line.strip.empty?
 
-      columns = line.strip.split(",", -1)
-      raise TransactionParseError, "expected 3 columns, got #{columns.length}" unless columns.length == 3
-
-      from, to, amount = columns
-      amount_cents = parse_amount_to_cents(amount)
-      raise TransactionParseError, "invalid amount: #{amount}" unless amount_cents&.positive?
-
-      { from_account_number: from, to_account_number: to, amount_cents: amount_cents }
+      parse_row(line.strip)
     end
   end
   private_class_method :parse_rows
+
+  def self.parse_row(line)
+    columns = line.split(",", -1)
+    raise TransactionParseError, "expected 3 columns, got #{columns.length}" unless columns.length == 3
+
+    from, to, amount = columns
+    amount_cents = parse_amount_to_cents(amount)
+    raise TransactionParseError, "invalid amount: #{amount}" unless amount_cents&.positive?
+
+    { from_account_number: from, to_account_number: to, amount_cents: amount_cents }
+  end
+  private_class_method :parse_row
 
   def self.parse_amount_to_cents(amount_string)
     return nil unless amount_string.match?(/\A\d+(\.\d{1,2})?\z/)
