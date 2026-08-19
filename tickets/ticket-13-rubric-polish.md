@@ -1,6 +1,8 @@
 # Ticket 13 — Rubric polish (rubocop, readability, coverage)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): rubocop 0 offenses (18 autocorrected — all cosmetic array-bracket spacing in specs). Extracted: `render_error` helper (controller), `transfer_funds` (process!), `parse_row` (parsing). Remaining lengths structural (process! 19, transfer_funds 14, create 23 — each branch a single return). rspec 84 examples, 0 failures. No behavior changes.
 **Estimate:** ~30 min
 **Depends on:** Tickets 01–12 (all functionality exists and is green)
 

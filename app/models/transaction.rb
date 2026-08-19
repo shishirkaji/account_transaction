@@ -25,18 +25,7 @@ class Transaction < ApplicationRecord
       return fail("ACCOUNT_BLOCKED")
     end
 
-    ActiveRecord::Base.transaction do
-      begin
-        from_account.deduct_balance(amount_cents)
-      rescue InsufficientBalanceError
-        from_account.block("insufficient balance")
-        return fail("INSUFFICIENT_BALANCE")
-      end
-
-      to_account.reload
-      to_account.add_balance(amount_cents)
-      complete
-    end
+    transfer_funds(from_account, to_account)
   end
 
   def fail(reason)
@@ -61,6 +50,21 @@ class Transaction < ApplicationRecord
   end
 
   private
+
+  def transfer_funds(from_account, to_account)
+    ActiveRecord::Base.transaction do
+      begin
+        from_account.deduct_balance(amount_cents)
+      rescue InsufficientBalanceError
+        from_account.block("insufficient balance")
+        return fail("INSUFFICIENT_BALANCE")
+      end
+
+      to_account.reload
+      to_account.add_balance(amount_cents)
+      complete
+    end
+  end
 
   def prevent_destroy
     errors.add(:base, "transactions can never be deleted")
