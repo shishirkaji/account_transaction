@@ -1,6 +1,8 @@
 # Ticket 02 — Make RSpec boot with ActiveRecord
 
 **Status:** TODO
+
+> Verification note (2026-08-19): all acceptance criteria verified — test DB created, rspec exits 0, no AR errors.
 **Estimate:** ~10 min
 **Depends on:** Ticket 01 (SQLite wired — verified)
 
