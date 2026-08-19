@@ -16,6 +16,9 @@
 /storage/*
 !/storage/.keep
 
+/coverage/*
+!/coverage/.keep
+
 /node_modules
 
 .DS_Store
