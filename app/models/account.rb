@@ -1,4 +1,6 @@
 class Account < ApplicationRecord
+  include CentsFormatter
+
   validates :account_number, presence: true,
                              format: { with: /\A\d{16}\z/ },
                              uniqueness: true
@@ -29,11 +31,5 @@ class Account < ApplicationRecord
       blocked: blocked,
       blocked_reason: blocked_reason
     }
-  end
-
-  private
-
-  def format_cents(cents)
-    format("%d.%02d", cents / 100, cents % 100)
   end
 end

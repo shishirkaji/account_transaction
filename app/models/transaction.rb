@@ -1,4 +1,6 @@
 class Transaction < ApplicationRecord
+  include CentsFormatter
+
   belongs_to :transaction_file, optional: true
 
   enum :status, { pending: "pending", complete: "complete", failed: "failed" }, default: :pending
@@ -59,10 +61,6 @@ class Transaction < ApplicationRecord
   end
 
   private
-
-  def format_cents(cents)
-    cents.nil? ? nil : format("%d.%02d", cents / 100, cents % 100)
-  end
 
   def prevent_destroy
     errors.add(:base, "transactions can never be deleted")
