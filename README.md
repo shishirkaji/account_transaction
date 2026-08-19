@@ -27,13 +27,36 @@ Built with **Rails 8.1 (API-only)**, **Ruby 4.0.6**, **SQLite**, and **RSpec**.
 Full plan and decisions: [`POA.md`](POA.md). Ticket breakdown:
 [`tickets/`](tickets/).
 
-## Requirements
+## Quick start — Docker (recommended)
+
+No Ruby install needed. With [Docker](https://www.docker.com/) installed:
+
+```bash
+docker compose up --build
+```
+
+The container runs migrations + seeds on boot and serves on
+<http://localhost:3000> — ready in one command, regardless of your Ruby
+version. The SQLite file persists on your machine via the `./storage` volume.
+
+To stop: `Ctrl+C`, or `docker compose down`.
+
+> The Docker image pins Ruby 4.0.6, so the app behaves identically on any
+> machine. Local development below remains an option if you prefer it.
+
+## Requirements (local development only)
+
+Skip this section if you ran the Docker quick start above.
 
 - Ruby 4.0.6 (via rbenv or your preferred manager)
 - Bundler
 - SQLite 3 (macOS ships it)
 
-## Setup
+## Alternative: run locally without Docker
+
+Preferred when you already have Ruby 4.0.6 set up.
+
+### Setup
 
 ```bash
 bundle install
@@ -44,7 +67,7 @@ bin/rails load_balances    # loads the 5 sample accounts from data/mable_account
 `db:migrate` creates `storage/development.sqlite3`; `load_balances` clears and
 reloads the accounts from the sample CSV (safe to re-run anytime).
 
-## Run
+### Run
 
 ```bash
 bin/rails server
@@ -52,7 +75,7 @@ bin/rails server
 
 The API listens on <http://localhost:3000>.
 
-## Test
+### Test
 
 ```bash
 bundle exec rspec
@@ -112,15 +135,3 @@ curl http://localhost:3000/transaction_files
 ### GET /up — health check
 
 Returns 200 when the app is alive.
-
-## Alternative: run with Docker
-
-Optional — local setup above is preferred. With Docker installed:
-
-```bash
-docker compose up --build
-```
-
-The container runs migrations + seeds on boot and serves on
-<http://localhost:3000>; the SQLite file persists on your machine via the
-`./storage` volume.
