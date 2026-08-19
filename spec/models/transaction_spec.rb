@@ -44,4 +44,134 @@ RSpec.describe Transaction, type: :model do
       expect(transaction.reload).to be_complete
     end
   end
+
+  describe "#process!" do
+    it "moves funds and records old balances on the happy path" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 500000)
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      transaction = create(:transaction, from_account_number: from.account_number,
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50000)
+
+      transaction.process!
+
+      expect(from.reload.balance_cents).to eq(450000)
+      expect(to.reload.balance_cents).to eq(170000)
+      expect(transaction.reload).to be_complete
+      expect(transaction.from_account_old_balance_cents).to eq(500000)
+      expect(transaction.to_account_old_balance_cents).to eq(120000)
+    end
+
+    it "raises when the transaction is not pending (only processes once)" do
+      transaction = create(:transaction, status: :complete)
+
+      expect { transaction.process! }.to raise_error("Transaction only gets processed once")
+    end
+
+    it "fails with ACCOUNT_BLOCKED when the from-account is blocked, leaving balances untouched" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 500000, blocked: true,
+                              blocked_reason: "fraud")
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      transaction = create(:transaction, from_account_number: from.account_number,
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50000)
+
+      transaction.process!
+
+      expect(transaction.reload).to be_failed
+      expect(transaction.fail_reason).to eq("ACCOUNT_BLOCKED")
+      expect(from.reload.balance_cents).to eq(500000)
+      expect(to.reload.balance_cents).to eq(120000)
+    end
+
+    it "fails with INSUFFICIENT_BALANCE and blocks the from-account" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 50000)
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      transaction = create(:transaction, from_account_number: from.account_number,
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50001)
+
+      transaction.process!
+
+      expect(transaction.reload).to be_failed
+      expect(transaction.fail_reason).to eq("INSUFFICIENT_BALANCE")
+      expect(from.reload).to be_blocked
+      expect(from.reload.blocked_reason).to eq("insufficient balance")
+      expect(to.reload.balance_cents).to eq(120000)
+    end
+
+    it "cascades: a second transaction from the now-blocked account fails with ACCOUNT_BLOCKED" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 50000)
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      first = create(:transaction, from_account_number: from.account_number,
+                                   to_account_number: to.account_number,
+                                   amount_cents: 50001)
+      second = create(:transaction, from_account_number: from.account_number,
+                                    to_account_number: to.account_number,
+                                    amount_cents: 100)
+
+      first.process!
+      second.process!
+
+      expect(first.reload.fail_reason).to eq("INSUFFICIENT_BALANCE")
+      expect(second.reload).to be_failed
+      expect(second.fail_reason).to eq("ACCOUNT_BLOCKED")
+    end
+
+    it "still completes when the to-account is blocked (blocked accounts can receive)" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 500000)
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000, blocked: true,
+                            blocked_reason: "fraud")
+      transaction = create(:transaction, from_account_number: from.account_number,
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50000)
+
+      transaction.process!
+
+      expect(transaction.reload).to be_complete
+      expect(to.reload.balance_cents).to eq(170000)
+    end
+
+    it "fails with ACCOUNT_NOT_FOUND when an account is missing" do
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      transaction = create(:transaction, from_account_number: "9999999999999999",
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50000)
+
+      transaction.process!
+
+      expect(transaction.reload).to be_failed
+      expect(transaction.fail_reason).to eq("ACCOUNT_NOT_FOUND")
+      expect(to.reload.balance_cents).to eq(120000)
+    end
+
+    it "allows self-transfers (net zero) when funds are sufficient" do
+      account = create(:account, account_number: "1111234522226789", balance_cents: 500000)
+      transaction = create(:transaction, from_account_number: account.account_number,
+                                         to_account_number: account.account_number,
+                                         amount_cents: 50000)
+
+      transaction.process!
+
+      expect(transaction.reload).to be_complete
+      expect(account.reload.balance_cents).to eq(500000)
+    end
+
+    it "rolls back everything when crediting the to-account raises" do
+      from = create(:account, account_number: "1111234522226789", balance_cents: 500000)
+      to = create(:account, account_number: "1212343433335665", balance_cents: 120000)
+      transaction = create(:transaction, from_account_number: from.account_number,
+                                         to_account_number: to.account_number,
+                                         amount_cents: 50000)
+      allow(Account).to receive(:find_by).with(account_number: from.account_number).and_return(from)
+      allow(Account).to receive(:find_by).with(account_number: to.account_number).and_return(to)
+      allow(to).to receive(:add_balance).and_raise("boom")
+
+      expect { transaction.process! }.to raise_error("boom")
+
+      expect(from.reload.balance_cents).to eq(500000)
+      expect(to.reload.balance_cents).to eq(120000)
+      expect(transaction.reload).to be_pending
+    end
+  end
 end
