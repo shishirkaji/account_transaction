@@ -1,6 +1,8 @@
 # Ticket 05 — Account validations + factory + specs
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). Factory + 6 specs; validations presence/format/uniqueness. rspec 6 examples, 0 failures; SimpleCov 33/33 (100%). Note: test DB needed `RAILS_ENV=test bin/rails db:migrate` (it predated the accounts table).
 **Estimate:** ~25 min
 **Depends on:** Ticket 03 (accounts table exists), Ticket 04 (factory_bot available)
 
