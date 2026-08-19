@@ -22,7 +22,7 @@ RSpec.describe TransactionFile, type: :model do
       expect(file.transactions.first.amount_cents).to eq(50000)
     end
 
-    it "raises TransactionParseError and marks the file invalid on wrong column count, creating no transactions" do
+    it "raises TransactionParseError on wrong column count, creating no transactions" do
       csv = "1111234522226789,1212343433335665,500.00\n3212343433335755,2222123433331212\n"
 
       expect { TransactionFile.create_with_transactions(csv, name: "bad.csv") }
@@ -31,6 +31,20 @@ RSpec.describe TransactionFile, type: :model do
       file = TransactionFile.find_by(name: "bad.csv")
       expect(file).not_to be_is_valid
       expect(file.transactions.count).to eq(0)
+    end
+
+    it "raises on too many columns (regression: 4-column row was silently accepted)" do
+      csv = "a,b,500.00,extra\n"
+
+      expect { TransactionFile.create_with_transactions(csv, name: "bad.csv") }
+        .to raise_error(TransactionParseError, /expected 3 columns, got 4/)
+    end
+
+    it "raises on a trailing comma (regression: was silently accepted)" do
+      csv = "1111234522226789,1212343433335665,500.00,\n"
+
+      expect { TransactionFile.create_with_transactions(csv, name: "bad.csv") }
+        .to raise_error(TransactionParseError)
     end
 
     it "raises TransactionParseError on non-numeric amount, creating no transactions" do

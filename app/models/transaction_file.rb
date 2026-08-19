@@ -16,9 +16,10 @@ class TransactionFile < ApplicationRecord
     csv_string.each_line.filter_map do |line|
       next if line.strip.empty?
 
-      from, to, amount = line.strip.split(",")
-      raise TransactionParseError, "expected 3 columns, got #{line.strip.split(",").length}" unless from && to && amount
+      columns = line.strip.split(",", -1)
+      raise TransactionParseError, "expected 3 columns, got #{columns.length}" unless columns.length == 3
 
+      from, to, amount = columns
       amount_cents = parse_amount_to_cents(amount)
       raise TransactionParseError, "invalid amount: #{amount}" unless amount_cents&.positive?
 
