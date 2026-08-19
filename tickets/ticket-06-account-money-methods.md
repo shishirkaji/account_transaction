@@ -1,6 +1,8 @@
 # Ticket 06 — Account money methods + specs
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). 5 new specs + error class + 3 methods. rspec 11 examples, 0 failures; SimpleCov 46/46 (100%). Console proofs: add → `550000`; deduct below $0 → `raised`; block → `[true, "fraud"]`. Matched Shishir's `be_invalid` style from 05.
 **Estimate:** ~30 min
 **Depends on:** Ticket 05 (validations done)
 
