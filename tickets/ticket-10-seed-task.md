@@ -1,6 +1,8 @@
 # Ticket 10 — Seed task: load account balances
 
 **Status:** TODO
+
+> Verification note (2026-08-20): data CSV copied; `load_balances` task (clear-and-reload). Run 1 → `[5, 500000]`; run 2 → still 5 (no dupes). All 5 balances match CSV (5000.00→500000 etc.). rspec 61 examples, 0 failures.
 **Estimate:** ~15 min
 **Depends on:** Ticket 03 (accounts table)
 
