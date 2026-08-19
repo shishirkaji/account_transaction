@@ -22,8 +22,18 @@ prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["32
 - **Ruby 4.x needs `csv` declared explicitly** (bundled gem) — first task
 - Error class: `app/errors/transaction_parse_error.rb` (Zeitwerk autoloads it)
 
-## Tasks
-- [ ] Add `gem "csv"` to the Gemfile → `bundle install`
+## Tasks — TEST-FIRST (red → green)
+
+**Phase 1: RED — write the specs, prove they fail**
+- [ ] Write the 4 spec groups in `spec/models/transaction_file_spec.rb`:
+  - valid CSV → file `valid: true`, N transactions in order, all `pending`
+  - wrong column count → raises, file exists with `valid: false`, **zero transactions created**
+  - non-numeric amount → raises
+  - negative/zero amount → raises
+- [ ] Run `bundle exec rspec spec/models/transaction_file_spec.rb` → confirm failures (`NoMethodError: undefined method 'create_with_transactions'`) — **this red is the proof the specs describe real behavior**
+
+**Phase 2: GREEN — implement until the specs pass**
+- [ ] Add `gem "csv"` to the Gemfile → `bundle install` (Ruby 4.x needs it declared explicitly)
 - [ ] Create `app/errors/transaction_parse_error.rb`:
   ```ruby
   class TransactionParseError < StandardError; end
@@ -39,12 +49,8 @@ prints `[true, [["1111234522226789", "1212343433335665", 50000, "pending"], ["32
   - exactly 3 comma-separated columns (`from`, `to`, `amount`)
   - skip blank lines
   - amount matches `\A\d+(\.\d{1,2})?\z` and is > 0
-- [ ] Specs in `spec/models/transaction_file_spec.rb`:
-  - valid CSV → file `valid: true`, N transactions in order, all `pending`
-  - wrong column count → raises, file exists with `valid: false`, **zero transactions created**
-  - non-numeric amount → raises
-  - negative/zero amount → raises
-- [ ] Run `bundle exec rspec`
+- [ ] Run `bundle exec rspec` → all green; check SimpleCov TransactionFile ≥ 90%
+- [ ] Only after green: run the deliverable command below as an end-to-end sanity check
 
 ## Acceptance criteria
 - [ ] All specs pass, 0 failures

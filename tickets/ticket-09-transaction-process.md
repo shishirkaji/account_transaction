@@ -37,6 +37,7 @@ prints `[450000, 170000, "complete", 500000, 120000]`.
   - to-account blocked → still `complete`, funds received
   - unknown account → `failed`/`ACCOUNT_NOT_FOUND`
   - self-transfer (from == to) → allowed, net zero, `complete`
+  - atomicity : when crediting the to-account raises (stub `allow(to_account).to receive(:add_balance).and_raise("boom")`), `process!` raises AND both account balances + the transaction status are unchanged (rolled back)
 - [ ] Run `bundle exec rspec spec/models/transaction_spec.rb` → confirm failures (NoMethodError: undefined method `process!`) — **this red is the proof the specs describe real behavior**
 
 **Phase 2: GREEN — implement until the specs pass**
@@ -49,6 +50,7 @@ prints `[450000, 170000, "complete", 500000, 120000]`.
   6. `from_account.deduct_balance(amount_cents)` → rescue `InsufficientBalanceError` → `from_account.block("insufficient balance")` → `fail("INSUFFICIENT_BALANCE")` and stop
   7. `to_account.add_balance(amount_cents)` (blocked to-account does NOT stop this)
   8. `complete`
+  - **Wrap steps 6–8 (deduct → add → complete) in `ActiveRecord::Base.transaction do ... end`** — atomicity: if crediting the to-account raises, the deduct rolls back too. A transaction can never half-apply.
 - [ ] Implement the two transition helpers:
   - `fail(reason)` → sets `status = :failed` + `fail_reason = reason`, saves
   - `complete` → sets `status = :complete`, saves
