@@ -1,6 +1,8 @@
 # Ticket 04 — Test infrastructure: factory_bot + simplecov
 
 **Status:** TODO
+
+> Verification note (2026-08-20): factory_bot_rails 6.5.1 + simplecov 1.1.1 installed; support files auto-required; rspec 1 example, 0 failures, 1 pending (Ticket 03 placeholder); SimpleCov report generated — line coverage 32/32 (100%).
 **Estimate:** ~10 min
 **Depends on:** Ticket 02 (RSpec boots with AR)
 
