@@ -1,4 +1,6 @@
 class Transaction < ApplicationRecord
+  include CentsFormatter
+
   belongs_to :transaction_file, optional: true
 
   enum :status, { pending: "pending", complete: "complete", failed: "failed" }, default: :pending
@@ -43,6 +45,19 @@ class Transaction < ApplicationRecord
 
   def complete
     update!(status: :complete)
+  end
+
+  def as_json(*)
+    {
+      id: id,
+      from_account_number: from_account_number,
+      to_account_number: to_account_number,
+      amount: format_cents(amount_cents),
+      status: status,
+      fail_reason: fail_reason,
+      from_account_old_balance: format_cents(from_account_old_balance_cents),
+      to_account_old_balance: format_cents(to_account_old_balance_cents)
+    }
   end
 
   private

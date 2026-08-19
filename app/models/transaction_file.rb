@@ -35,4 +35,13 @@ class TransactionFile < ApplicationRecord
     dollars.to_i * 100 + (cents || "0").ljust(2, "0").to_i
   end
   private_class_method :parse_amount_to_cents
+
+  def as_json(*)
+    {
+      id: id,
+      name: name,
+      uploaded_at: uploaded_at,
+      is_valid: is_valid
+    }
+  end
 end
