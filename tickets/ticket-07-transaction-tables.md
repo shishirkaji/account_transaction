@@ -1,6 +1,8 @@
 # Ticket 07 — transaction_files + transactions tables (with bare models)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): both tables + models + enum created. **Column renamed `valid` → `is_valid` per Shishir** (Rails refuses `valid` — collides with `valid?`). POA + tickets 07/08/09/12 updated. rspec 13 examples, 0 failures, 2 pending (generated placeholders); SimpleCov 51/51 (100%).
 **Estimate:** ~15 min
 **Depends on:** Ticket 03 (migration pattern proven)
 
@@ -9,7 +11,7 @@ The two remaining tables exist, with bare models and the **locked status enum**.
 
 ## You'll know it worked when (deliverable)
 ```
-bin/rails runner "f = TransactionFile.create!(name: 'demo.csv', uploaded_at: Time.current); t = f.transactions.create!(from_account_number: '1111234522226789', to_account_number: '1212343433335665', amount_cents: 50000); puts [f.valid, t.status, t.transaction_file_id].inspect"
+bin/rails runner "f = TransactionFile.create!(name: 'demo.csv', uploaded_at: Time.current); t = f.transactions.create!(from_account_number: '1111234522226789', to_account_number: '1212343433335665', amount_cents: 50000); puts [f.is_valid, t.status, t.transaction_file_id].inspect"
 ```
 prints `[false, "pending", 1]` (or similar ids).
 
@@ -18,8 +20,8 @@ prints `[false, "pending", 1]` (or similar ids).
 - Columns and indexes are locked — copy them exactly
 
 ## Tasks
-- [ ] Generate: `bin/rails generate model TransactionFile name:string uploaded_at:datetime valid:boolean`
-- [ ] In the migration, set `valid` default to `false`
+- [ ] Generate: `bin/rails generate model TransactionFile name:string uploaded_at:datetime is_valid:boolean`
+- [ ] In the migration, set `is_valid` default to `false`
 - [ ] Generate: `bin/rails generate model Transaction transaction_file:references from_account_number:string to_account_number:string amount_cents:integer status:string fail_reason:string from_account_old_balance_cents:integer to_account_old_balance_cents:integer`
 - [ ] In the transactions migration, add:
   - `status` default `"pending"`
