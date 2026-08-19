@@ -45,7 +45,24 @@ class Transaction < ApplicationRecord
     update!(status: :complete)
   end
 
+  def as_json(*)
+    {
+      id: id,
+      from_account_number: from_account_number,
+      to_account_number: to_account_number,
+      amount: format_cents(amount_cents),
+      status: status,
+      fail_reason: fail_reason,
+      from_account_old_balance: format_cents(from_account_old_balance_cents),
+      to_account_old_balance: format_cents(to_account_old_balance_cents)
+    }
+  end
+
   private
+
+  def format_cents(cents)
+    cents.nil? ? nil : format("%d.%02d", cents / 100, cents % 100)
+  end
 
   def prevent_destroy
     errors.add(:base, "transactions can never be deleted")

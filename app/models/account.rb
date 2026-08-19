@@ -21,4 +21,19 @@ class Account < ApplicationRecord
     update!(blocked: true, blocked_reason: reason)
     nil
   end
+
+  def as_json(*)
+    {
+      account_number: account_number,
+      balance: format_cents(balance_cents),
+      blocked: blocked,
+      blocked_reason: blocked_reason
+    }
+  end
+
+  private
+
+  def format_cents(cents)
+    format("%d.%02d", cents / 100, cents % 100)
+  end
 end

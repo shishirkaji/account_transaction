@@ -63,4 +63,28 @@ RSpec.describe "TransactionFiles", type: :request do
       expect(statuses).to eq([["failed", "INSUFFICIENT_BALANCE"], ["failed", "ACCOUNT_BLOCKED"]])
     end
   end
+
+  describe "GET /transaction_files" do
+    it "returns file records with curated JSON in the envelope" do
+      create(:transaction_file, name: "day1.csv", uploaded_at: Time.utc(2026, 8, 20), is_valid: true)
+
+      get "/transaction_files"
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+      expect(body["status"]).to eq("SUCCESS")
+      files = body["data"]
+      expect(files.length).to eq(1)
+      expect(files.first["name"]).to eq("day1.csv")
+      expect(files.first["is_valid"]).to be(true)
+      expect(files.first.keys).to contain_exactly("id", "name", "uploaded_at", "is_valid")
+    end
+
+    it "returns an empty array when there are no files" do
+      get "/transaction_files"
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)["data"]).to eq([])
+    end
+  end
 end

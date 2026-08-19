@@ -28,4 +28,8 @@ class TransactionFilesController < ApplicationController
     render json: { status: "FAILED_TO_PARSE_TRANSACTIONS", error: e.message },
            status: :unprocessable_entity
   end
+
+  def index
+    render json: { status: "SUCCESS", data: TransactionFile.order(:id).map(&:as_json) }
+  end
 end

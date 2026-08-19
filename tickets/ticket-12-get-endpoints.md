@@ -1,6 +1,8 @@
 # Ticket 12 — GET endpoints + as_json shapes
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). 3 GET routes + 3 controllers + as_json overrides on all models (dollar strings via `format_cents`, nil-safe on old balances). Also fixed stale factory (`valid` → `is_valid`). rspec 75 examples, 0 failures. Curl proof: `/accounts` returns `5000.00`-style balances; `/transaction_files` curated.
 **Estimate:** ~30 min
 **Depends on:** Ticket 11 (routes + envelope pattern proven)
 
