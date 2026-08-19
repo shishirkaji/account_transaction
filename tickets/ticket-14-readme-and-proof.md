@@ -1,6 +1,8 @@
 # Ticket 14 — README + fresh-clone proof (final ticket)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): README rewritten (overview, design, setup, run, test, full API reference with envelope + status codes, Docker alternative). Fresh-clone proof passed: deleted dev DB → migrate → load_balances → server → real CSV upload → 201, 4× complete, balances exact (4820.50/9974.40/1550.00/1725.60/48679.50). rspec 84 examples 0 failures; rubocop 0 offenses. Also committed Ticket 13 follow-up (rubocop spec/Gemfile autocorrects missed in PR #17).
 **Estimate:** ~30 min
 **Depends on:** Tickets 01–13
 

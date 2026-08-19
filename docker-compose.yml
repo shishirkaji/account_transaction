@@ -5,3 +5,4 @@ services:
       - "3000:3000"
     volumes:
       - ./storage:/app/storage
+      - ./data/mable_account_balances_50.csv:/app/data/mable_account_balances.csv

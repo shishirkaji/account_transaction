@@ -40,9 +40,9 @@ RSpec.describe TransactionFile, type: :model do
       expect(file).to be_is_valid
       expect(file.name).to eq("day1.csv")
       transactions = file.transactions
-      expect(transactions.map(&:from_account_number)).to eq(["1111234522226789", "3212343433335755"])
-      expect(transactions.map(&:to_account_number)).to eq(["1212343433335665", "2222123433331212"])
-      expect(transactions.map(&:amount_cents)).to eq([50000, 100000])
+      expect(transactions.map(&:from_account_number)).to eq([ "1111234522226789", "3212343433335755" ])
+      expect(transactions.map(&:to_account_number)).to eq([ "1212343433335665", "2222123433331212" ])
+      expect(transactions.map(&:amount_cents)).to eq([ 50000, 100000 ])
       expect(transactions.map(&:status)).to all(eq("pending"))
     end
 
@@ -86,7 +86,7 @@ RSpec.describe TransactionFile, type: :model do
     end
 
     it "raises TransactionParseError on negative or zero amount, creating no transactions" do
-      ["-5.00", "0.00"].each do |amount|
+      [ "-5.00", "0.00" ].each do |amount|
         csv = "1111234522226789,1212343433335665,#{amount}\n"
 
         expect { TransactionFile.create_with_transactions(csv, name: "bad.csv") }

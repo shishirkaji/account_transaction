@@ -59,8 +59,8 @@ RSpec.describe "TransactionFiles", type: :request do
       upload(csv)
 
       expect(response).to have_http_status(:created)
-      statuses = JSON.parse(response.body)["data"]["transactions"].map { |t| [t["status"], t["fail_reason"]] }
-      expect(statuses).to eq([["failed", "INSUFFICIENT_BALANCE"], ["failed", "ACCOUNT_BLOCKED"]])
+      statuses = JSON.parse(response.body)["data"]["transactions"].map { |t| [ t["status"], t["fail_reason"] ] }
+      expect(statuses).to eq([ [ "failed", "INSUFFICIENT_BALANCE" ], [ "failed", "ACCOUNT_BLOCKED" ] ])
     end
   end
 
