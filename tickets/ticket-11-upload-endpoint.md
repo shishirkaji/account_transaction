@@ -1,6 +1,8 @@
 # Ticket 11 — POST /transaction_files (upload → process → envelope)
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). 6 request specs + route + controller (size/format checks, parse rescue, ordered processing, envelope). rspec 67 examples, 0 failures. E2E: seeded + curl real challenge CSV → 201 SUCCESS, 4× complete, balances exact (482050 / 997440 / 155000 / 172560 / 4867950). Test-data fix: `1000.00` = 100000¢ drained account to 0 — used `10.00` (1000¢) instead.
 **Estimate:** ~45 min (biggest API ticket)
 **Depends on:** Tickets 08 (parsing), 09 (process!), 10 (seed, for end-to-end)
 
