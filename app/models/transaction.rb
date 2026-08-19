@@ -12,9 +12,6 @@ class Transaction < ApplicationRecord
     from_account = Account.find_by(account_number: from_account_number)
     to_account = Account.find_by(account_number: to_account_number)
 
-    self.from_account_old_balance_cents = from_account&.balance_cents
-    self.to_account_old_balance_cents = to_account&.balance_cents
-
     if from_account.nil? || to_account.nil?
       return fail("ACCOUNT_NOT_FOUND")
     end
@@ -22,6 +19,9 @@ class Transaction < ApplicationRecord
     if from_account.blocked?
       return fail("ACCOUNT_BLOCKED")
     end
+
+    self.from_account_old_balance_cents = from_account.balance_cents
+    self.to_account_old_balance_cents = to_account.balance_cents
 
     ActiveRecord::Base.transaction do
       begin
