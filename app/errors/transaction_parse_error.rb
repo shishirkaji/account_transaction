@@ -1,0 +1,1 @@
+class TransactionParseError < StandardError; end

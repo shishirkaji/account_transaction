@@ -1,6 +1,8 @@
 # Ticket 08 — TransactionFile parses CSV into pending transactions
 
 **Status:** TODO
+
+> Verification note (2026-08-20): spec-first (red → green). `csv` gem added; `TransactionParseError` created; `create_with_transactions` + `parse_amount_to_cents` (string math, no floats) implemented. rspec 23 examples, 0 failures; deliverable proof matches expected arrays exactly.
 **Estimate:** ~30 min
 **Depends on:** Ticket 07 (tables exist)
 
