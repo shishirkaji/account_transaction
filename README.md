@@ -43,6 +43,26 @@ curl -F "file=@mable_transactions.csv" http://localhost:3000/transaction_files
 
 Per-transaction `fail_reason`: `INSUFFICIENT_BALANCE` · `ACCOUNT_BLOCKED` · `ACCOUNT_NOT_FOUND`
 
+Example response (truncated to one transaction):
+
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "transaction_file": { "id": 1, "name": "mable_transactions.csv", "is_valid": true },
+    "transactions": [
+      {
+        "from_account_number": "1111234522226789",
+        "to_account_number": "1212343433335665",
+        "amount": "500.00",
+        "status": "complete",
+        "fail_reason": null
+      }
+    ]
+  }
+}
+```
+
 ### Other handy endpoints
 
 | Endpoint | Returns |
