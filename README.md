@@ -22,9 +22,15 @@ volumes:
 
 Then `docker compose up --build`. Bundled datasets: `data/mable_account_balances_50.csv` (50 accounts) · `data/mable_transactions_100.csv` (100 diverse transfers).
 
-## API
+### Reset the database
 
-Envelope: `{ "status": ..., "data": ..., "error": ... }`
+```bash
+docker compose down
+rm -f storage/development.sqlite3
+docker compose up --build
+```
+
+## API
 
 ### POST /transaction_files — upload a day's transfers
 
