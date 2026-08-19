@@ -1,6 +1,8 @@
 # Ticket 03 — Accounts table + bare Account model
 
 **Status:** TODO
+
+> Verification note (2026-08-19): migration + unique index applied; round-trip proof → `500000`; duplicate → `RecordNotUnique`; defaults `[0, false]`; rspec 0 failures (1 pending placeholder). Also created `app/models/application_record.rb` — missing due to the `--skip-active-record` scaffold (model generator had silently no-op'd on branches lacking the AR railtie require).
 **Estimate:** ~20 min
 **Depends on:** Ticket 01 (SQLite wired)
 
