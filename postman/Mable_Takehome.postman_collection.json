@@ -1,0 +1,97 @@
+{
+  "info": {
+    "name": "Mable Take-Home — Solution Transaction",
+    "description": "Collection for the Mable banking API. Set the `baseUrl` variable (default http://localhost:3000 — start via `docker compose up --build` or `bin/rails server`). Seed balances first with `bin/rails load_balances` (or the container does it on boot).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/up",
+          "host": ["{{baseUrl}}"],
+          "path": ["up"]
+        },
+        "description": "Liveness check. Returns 200 when the app is up."
+      },
+      "response": []
+    },
+    {
+      "name": "Upload a day's transfers (CSV)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": [],
+              "description": "The transfers CSV. Each row: `from,to,amount` (no header), e.g.\n\n```\n1111234522226789,1212343433335665,500.00\n3212343433335755,2222123433331212,1000.00\n```"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/transaction_files",
+          "host": ["{{baseUrl}}"],
+          "path": ["transaction_files"]
+        },
+        "description": "Upload a CSV of transfers. File must be < 1MB and end in `.csv`.\n\nSuccess → `201` with `SUCCESS` and per-transaction statuses.\nFailures → `INVALID_FILE_FORMAT` (422), `FILE_SIZE_TOO_BIG` (413), `FAILED_TO_PARSE_TRANSACTIONS` (422).\n\nPer-transaction fail reasons: `INSUFFICIENT_BALANCE`, `ACCOUNT_BLOCKED`, `ACCOUNT_NOT_FOUND`."
+      },
+      "response": []
+    },
+    {
+      "name": "List accounts (balances)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/accounts",
+          "host": ["{{baseUrl}}"],
+          "path": ["accounts"]
+        },
+        "description": "All accounts with current balances as dollar strings, e.g. `\"balance\": \"5000.00\"`."
+      },
+      "response": []
+    },
+    {
+      "name": "List transactions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/transactions",
+          "host": ["{{baseUrl}}"],
+          "path": ["transactions"]
+        },
+        "description": "Every transaction with status, fail reason, and pre-transfer balances."
+      },
+      "response": []
+    },
+    {
+      "name": "List transaction files",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/transaction_files",
+          "host": ["{{baseUrl}}"],
+          "path": ["transaction_files"]
+        },
+        "description": "Every uploaded file record (name, uploaded_at, is_valid)."
+      },
+      "response": []
+    }
+  ]
+}
