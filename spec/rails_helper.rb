@@ -23,34 +23,9 @@ require 'rspec/rails'
 # Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 RSpec.configure do |config|
-  # Remove this line to enable support for ActiveRecord
-  config.use_active_record = false
-
-  # If you enable ActiveRecord support you should uncomment these lines,
-  # note if you'd prefer not to run each example within a transaction, you
-  # should set use_transactional_fixtures to false.
-  #
-  # config.fixture_paths = [
-  #   Rails.root.join('spec/fixtures')
-  # ]
-  # config.use_transactional_fixtures = true
-
-  # RSpec Rails uses metadata to mix in different behaviours to your tests,
-  # for example enabling you to call `get` and `post` in request specs. e.g.:
-  #
-  #     RSpec.describe UsersController, type: :request do
-  #       # ...
-  #     end
-  #
-  # The different available types are documented in the features, such as in
-  # https://rspec.info/features/8-0/rspec-rails
-  #
-  # You can also infer these behaviours automatically by location, e.g.
-  # /spec/models would pull in the same behaviour as `type: :model` but this
-  # behaviour is considered legacy and will be removed in a future version.
-  #
-  # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
+  # Enable ActiveRecord support; each example runs in a rolled-back transaction.
+  config.use_active_record = true
+  config.use_transactional_fixtures = true
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
